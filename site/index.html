@@ -1,5 +1,29 @@
 #!/bin/sh
 
+main() {
+  if [ $# -lt 1 ]; then
+    usage
+  fi
+
+  DO_CMD=$1
+  shift 1
+  WD=$(pwd)
+
+  case $DO_CMD in
+
+    git_sparse_checkout)
+      git_sparse_checkout $@
+      ;;
+
+    *)
+      usage
+      ;;
+
+  esac
+}
+
+# ----------- End Of Main Switch / Start Of Modular Code -----------
+
 usage() {
 
   cat<<ENDOFUSAGE
@@ -11,28 +35,6 @@ ENDOFUSAGE
 
 exit 1
 }
-
-if [ $# -lt 1 ]; then
-  usage
-fi
-
-DO_CMD=$1
-shift 1
-WD=$(pwd)
-
-case $DO_CMD in
-
-  git_sparse_checkout)
-    git_sparse_checkout $@
-    ;;
-
-  *)
-    usage
-    ;;
-
-esac
-
-# ----------- End Of Main Switch / Start Of Modular Code -----------
 
 git_sparse_checkout() {
   if [ "$#" -lt 3 ]; then
@@ -66,3 +68,5 @@ git_sparse_checkout() {
 
   exit $?
 }
+
+main
