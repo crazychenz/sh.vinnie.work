@@ -15,6 +15,10 @@ main() {
       git_sparse_checkout $@
       ;;
 
+    user_git_pull)
+      user_git_pull $@
+      ;;
+
     *)
       usage
       ;;
@@ -30,6 +34,7 @@ usage() {
 
   Subcommands:
   - git_sparse_checkout
+  - user_git_pull
 
 ENDOFUSAGE
 
@@ -37,8 +42,9 @@ exit 1
 }
 
 git_sparse_checkout() {
+
   if [ "$#" -lt 3 ]; then
-    echo "Usage: $0 <git-remote> <private-key> <local-path> <repo-path-0> [<repo-path-N>]"
+    echo "Usage: git_sparse_checkout <git-remote> <private-key> <local-path> <repo-path-0> [<repo-path-N>]"
   fi
 
   exit 0
@@ -69,4 +75,26 @@ git_sparse_checkout() {
   exit $?
 }
 
-main
+user_git_pull() {
+
+  if [ "$#" -lt 4 ]; then
+    echo "Usage: user_git_pull <user> <folder> <privkey> <repo>"
+  fi
+
+  user="$1"
+  folder="$2"
+  privkey="$3"
+  repo="$4"
+  shift 4
+
+  export GIT_SSH_COMMAND="ssh -i ${privkey} -o IdentitiesOnly=yes"
+
+  sudo mkdir -p ${folder}
+  sudo chown ${user} ${folder}
+  sudo -u ${user} git clone ${repo} ${folder}
+
+  exit $?
+}
+
+
+main $@
