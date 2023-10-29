@@ -1,0 +1,8 @@
+name: sh.vinnie.work
+static_sites:
+- environment_slug: txt
+  github:
+    branch: main
+    deploy_on_push: true
+    repo: crazychenz/sh.vinnie.work
+  name: sh.vinnie.work

@@ -1,0 +1,8 @@
+spec:
+  name: sh.vinnie.work
+  static_sites:
+  - environment_slug: txt
+    git:
+      branch: main
+      repo_clone_url: https://github.com/crazychenz/sh.vinnie.work.git
+    name: sh.vinnie.work
