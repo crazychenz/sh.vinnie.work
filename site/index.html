@@ -1,3 +1,68 @@
 #!/bin/sh
 
-echo "Running."
+usage() {
+
+  cat<<ENDOFUSAGE
+
+  Subcommands:
+  - git_sparse_checkout
+
+ENDOFUSAGE
+
+exit 1
+}
+
+if [ $# -lt 1 ]; then
+  usage
+fi
+
+DO_CMD=$1
+shift 1
+WD=$(pwd)
+
+case $DO_CMD in
+
+  git_sparse_checkout)
+    git_sparse_checkout $@
+    ;;
+
+  *)
+    usage
+    ;;
+
+esac
+
+# ----------- End Of Main Switch / Start Of Modular Code -----------
+
+git_sparse_checkout() {
+  if [ "$#" -lt 3 ]; then
+    echo "Usage: $0 <git-remote> <private-key> <local-path> <repo-path-0> [<repo-path-N>]"
+  fi
+
+  exit 0
+
+  rurl="$1"
+  privkey="$(realpath $2)"
+  localdir="$3"
+  shift 3
+
+  export GIT_SSH_COMMAND="ssh -i ${privkey} -o IdentitiesOnly=yes"
+
+  sudo mkdir -p "$localdir"
+  sudo chown $USER "$localdir"
+  cd "$localdir"
+
+  git init
+  git remote add -f origin "$rurl"
+
+  git config core.sparseCheckout true
+
+  # Loops over remaining args
+  for i; do
+    echo "$i" >> .git/info/sparse-checkout
+  done
+
+  git pull origin main
+
+  exit $?
+}
